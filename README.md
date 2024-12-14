@@ -1,2 +1,2 @@
-# inventors-circle
+# Inventors Circle
 A Collaborative Social Network for Inventors
