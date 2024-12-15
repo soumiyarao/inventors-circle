@@ -13,6 +13,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import {create} from './api-user.js'
+import {generate_recommendations} from './api-user.js'
 import {Link} from 'react-router-dom'
 import networkImg from './../assets/images/networking.jpg'
 
@@ -73,11 +74,22 @@ export default function Signup (){
       email: values.email || undefined,
       password: values.password || undefined
     }
+
     create(user).then((data) => {
+      console.log("create")
       if (data.error) {
         setValues({ ...values, error: data.error})
       } else {
         setValues({ ...values, error: '', open: true})
+      }
+    }) 
+
+    generate_recommendations(user).then((data) => {
+      console.log("generate_recommendations")
+      if (data.error) {
+        console.log("Error")
+      } else {
+        console.log("Success")
       }
     })
   }

@@ -7,6 +7,10 @@ const router = express.Router()
 router.route('/api/users')
   .get(userCtrl.list)
   .post(userCtrl.create)
+  .post(userCtrl.generate_recommendations)
+
+router.route('/api/users/recommendations')
+  .post(userCtrl.generate_recommendations)
 
 router.route('/api/users/photo/:userId')
   .get(userCtrl.photo, userCtrl.defaultPhoto)

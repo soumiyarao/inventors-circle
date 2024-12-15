@@ -5,6 +5,9 @@ import formidable from 'formidable'
 import fs from 'fs'
 import profileImage from './../../client/assets/images/profile-pic.png'
 
+const axios = require('axios');
+
+
 const create = async (req, res) => {
   const user = new User(req.body)
   try {
@@ -18,6 +21,29 @@ const create = async (req, res) => {
     })
   }
 }
+
+
+const generate_recommendations = async (req, res) => {
+  const user = new User(req.body)
+
+  try {
+    const response = await axios.post('http://localhost:5000/recommendations', { inventor_name: user["name"] });
+    
+    const result = await User.updateOne(
+      { name: user["name"] }, // Filter condition
+      { $set: { recommendations: response["data"]["recommendations"] } } // Update operation
+  );
+
+    return res.status(200).json({
+      message: "Successfully generated recommendations!"
+    })
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 
 /**
  * Load user and append to req.
@@ -199,5 +225,6 @@ export default {
   addFollower,
   removeFollowing,
   removeFollower,
-  findPeople
+  findPeople,
+  generate_recommendations
 }

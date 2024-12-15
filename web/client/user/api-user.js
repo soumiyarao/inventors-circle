@@ -14,6 +14,24 @@ const create = async (user) => {
   }
 }
 
+
+const generate_recommendations = async (user) => {
+  try {
+    let response = await fetch('/api/users/recommendations', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    })
+    return await response.json()
+  } catch(err) {
+    console.log(err)
+  }
+}
+
+
 const list = async (signal) => {
   try {
     let response = await fetch('/api/users/', {
@@ -133,5 +151,6 @@ export {
   remove,
   follow,
   unfollow,
-  findPeople
+  findPeople,
+  generate_recommendations
 }
