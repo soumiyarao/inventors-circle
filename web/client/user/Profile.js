@@ -20,6 +20,8 @@ import ProfileTabs from './../user/ProfileTabs'
 import {listByUser} from './../post/api-post.js'
 import networkImg from './../assets/images/networking.jpg'
 
+import Icon from '@material-ui/core/Icon'
+
 const useStyles = makeStyles(theme => ({
   background: {
 
@@ -57,7 +59,9 @@ export default function Profile({ match }) {
   const [values, setValues] = useState({
     user: {following:[], followers:[]},
     redirectToSignin: false,
-    following: false
+    following: false,
+    about: '',
+    organizations: ''
   })
   const [posts, setPosts] = useState([])
   const jwt = auth.isAuthenticated()
@@ -73,7 +77,11 @@ export default function Profile({ match }) {
         setValues({...values, redirectToSignin: true})
       } else {
         let following = checkFollow(data)
-        setValues({...values, user: data, following: following})
+        setValues({...values, 
+          user: data, 
+          about: Array.isArray(data.about) && data.about.length > 1 ? data.about.join(' | ') : data.about[0] || '', 
+          organizations: Array.isArray(data.organizations) && data.organizations.length > 1 ? data.organizations.join(' | ') : data.organizations[0] || '',
+          following: following})
         loadPosts(data._id)
       }
     })
@@ -98,7 +106,11 @@ export default function Profile({ match }) {
       if (data.error) {
         setValues({...values, error: data.error})
       } else {
-        setValues({...values, user: data, following: !values.following})
+        setValues({...values, 
+          about: Array.isArray(data.about) && data.about.length > 1 ? data.about.join(' | ') : data.about[0] || '', 
+          organizations: Array.isArray(data.organizations) && data.organizations.length > 1 ? data.organizations.join(' | ') : data.organizations[0] || '',
+          user: data, 
+          following: !values.following})
       }
     })
   }
@@ -125,6 +137,8 @@ export default function Profile({ match }) {
     const photoUrl = values.user._id
               ? `/api/users/photo/${values.user._id}?${new Date().getTime()}`
               : '/api/users/defaultphoto'
+
+
     if (values.redirectToSignin) {
       return <Redirect to='/signin'/>
     }
@@ -154,8 +168,18 @@ export default function Profile({ match }) {
           </ListItem>
           <Divider/>
           <ListItem>
-            <ListItemText primary={values.user.about} secondary={"Joined: " + (
-              new Date(values.user.created)).toDateString()}/>
+            <Icon >work</Icon>
+            <ListItemText style= {{'margin': 20}} primary={
+              values.organizations
+              }  />
+          </ListItem>
+          <ListItem>
+          <Icon>lightbulb</Icon>
+            <ListItemText style= {{'margin': 20}} primary={
+              values.about
+              }  secondary={
+                "Joined: " + (new Date(values.user.created)).toDateString()
+              }/>
           </ListItem>
         </List>
         <ProfileTabs user={values.user} posts={posts} removePostUpdate={removePost}/>

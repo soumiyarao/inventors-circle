@@ -24,7 +24,11 @@ const UserSchema = new mongoose.Schema({
     default: Date.now
   },
   about: {
-    type: String,
+    type:  [{type: String}],
+    trim: true
+  },
+  organization: {
+    type:  [{type: String}],
     trim: true
   },
   photo: {

@@ -69,6 +69,7 @@ export default function EditProfile({ match }) {
   const [values, setValues] = useState({
     name: '',
     about: '',
+    organizations: '',
     photo: '',
     email: '',
     password: '',
@@ -88,7 +89,14 @@ export default function EditProfile({ match }) {
       if (data & data.error) {
         setValues({...values, error: data.error})
       } else {
-        setValues({...values, id: data._id, name: data.name, email: data.email, about: data.about})
+        setValues({
+          ...values,
+          id: data._id,
+          name: data.name,
+          email: data.email,
+          about: Array.isArray(data.about) && data.about.length > 1 ? data.about.join(' | ') : data.about[0] || '',
+          organizations: Array.isArray(data.organizations) && data.organizations.length > 1 ? data.organizations.join(' | ') : data.organizations[0] || ''
+        })
       }
     })
     return function cleanup(){
@@ -103,6 +111,7 @@ export default function EditProfile({ match }) {
     values.email && userData.append('email', values.email)
     values.passoword && userData.append('passoword', values.passoword)
     values.about && userData.append('about', values.about)
+    values.organizations && userData.append('organizations', values.organizations)
     values.photo && userData.append('photo', values.photo)
     update({
       userId: match.params.userId
@@ -147,11 +156,21 @@ export default function EditProfile({ match }) {
           <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal"/><br/>
           <TextField
             id="multiline-flexible"
-            label="About"
+            label="Research Interest"
             multiline
             rows="2"
             value={values.about}
             onChange={handleChange('about')}
+            className={classes.textField}
+            margin="normal"
+          /><br/>
+          <TextField
+            id="multiline-flexible"
+            label="Organizations"
+            multiline
+            rows="2"
+            value={values.organizations}
+            onChange={handleChange('organizations')}
             className={classes.textField}
             margin="normal"
           /><br/>
