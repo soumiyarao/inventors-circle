@@ -15,7 +15,7 @@ def recommend():
     return jsonify({"recommendations": recommendations})
 
 if __name__ == '__main__':
-    recommender = InventorRecommenderCB("patents.json")
+    recommender = InventorRecommenderCB("../dataset/patents.json")
     recommender.initialize()
 
     app.run(port=5000)
