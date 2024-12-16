@@ -15,7 +15,8 @@ def update_following():
         num_non_recommended = random.randint(1, 5)
         non_recommended_following_ids = random.sample(non_recommended_ids, num_non_recommended)
         
-        updated_following = recommended_following_ids + non_recommended_following_ids
+        combined_following = recommended_following_ids + non_recommended_following_ids
+        updated_following = [user_id for user_id in combined_following if user_id != user["_id"]]
 
         users_collection.update_one({"_id": user["_id"]}, {"$set": {"following": updated_following}})
     
@@ -27,7 +28,7 @@ def update_followers():
         followers = []
         for other_user in all_users:
             if (user["_id"] != other_user["_id"]) and (user["_id"] in other_user.get("following", [])):
-                followers.append(str(other_user["_id"]))
+                followers.append(other_user["_id"])
         
         users_collection.update_one({"_id": user["_id"]}, {"$set": {"followers": followers}})
     
