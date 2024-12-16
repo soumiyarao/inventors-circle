@@ -11,7 +11,8 @@ def recommend():
     if not name:
         return jsonify({"error": "Name is required"}), 400
 
-    recommendations = recommender.recommend_inventors(name)    
+    recommendations = [name for name, _ in recommender.recommend_inventors(name)]
+    print(f"For inventor: {name} generated following recommendations: {recommendations}")
     return jsonify({"recommendations": recommendations})
 
 if __name__ == '__main__':

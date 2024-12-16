@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     type:  [{type: String}],
     trim: true
   },
-  organization: {
+  organizations: {
     type:  [{type: String}],
     trim: true
   },

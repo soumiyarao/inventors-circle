@@ -28,10 +28,10 @@ const generate_recommendations = async (req, res) => {
 
   try {
     const response = await axios.post('http://localhost:5000/recommendations', { inventor_name: user["name"] });
-    
+    //console.log(response)
     const result = await User.updateOne(
-      { name: user["name"] }, // Filter condition
-      { $set: { recommendations: response["data"]["recommendations"] } } // Update operation
+      { name: user["name"] },
+      { $set: { recommendations: response["data"]["recommendations"] } }
   );
 
     return res.status(200).json({

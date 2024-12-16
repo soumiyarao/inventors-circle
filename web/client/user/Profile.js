@@ -168,13 +168,13 @@ export default function Profile({ match }) {
           </ListItem>
           <Divider/>
           <ListItem>
-            <Icon >work</Icon>
+          {values.organizations && <Icon>work</Icon>}
             <ListItemText style= {{'margin': 20}} primary={
               values.organizations
               }  />
           </ListItem>
           <ListItem>
-          <Icon>lightbulb</Icon>
+          {values.about && <Icon>lightbulb</Icon>}
             <ListItemText style= {{'margin': 20}} primary={
               values.about
               }  secondary={
