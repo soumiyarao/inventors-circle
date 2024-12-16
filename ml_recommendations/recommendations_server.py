@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from ml_recommendations.contest_based_recommender import InventorRecommenderCB
+from contest_based_recommender import InventorRecommenderCB
 
 app = Flask(__name__)
 recommender = None
