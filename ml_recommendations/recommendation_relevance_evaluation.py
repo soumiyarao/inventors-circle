@@ -27,8 +27,10 @@ precision_at_k_sum = 0
 recall_at_k_sum = 0
 k = 10  # Define top K for precision and recall
 
+print("Starting Evaluation of Model")
+
 # Process each user
-for current_user in all_users[:500]:
+for current_user in all_users:
     user_id = current_user["_id"]
     recommendations = current_user.get("recommendations", [])
 
@@ -70,11 +72,10 @@ for current_user in all_users[:500]:
     # Update metrics
     total_relevance_scores += relevant_count / total_recommendations  # Relevance Score
     total_users += 1
-    print(total_users)
     if relevant_count > 0:
         users_with_relevant_recommendations += 1
 
-    # Calculate Precision@K and Recall@K
+    # Calculate Precision@K
     top_k_recommendations = recommendations[:k]
     relevant_in_top_k = len(set(top_k_recommendations) & relevant_recommendations)
     precision_at_k = relevant_in_top_k / k
@@ -89,9 +90,8 @@ coverage = users_with_relevant_recommendations / total_users if total_users > 0 
 average_precision_at_k = precision_at_k_sum / total_users if total_users > 0 else 0
 average_recall_at_k = recall_at_k_sum / total_users if total_users > 0 else 0
 
-# Output results
-print("Evaluation Metrics:")
-print(f"Coverage: {coverage:.2%}")
-print(f"Mean Relevance Score: {mean_relevance_score:.2f}")
+print("Total Users:" , total_users)
+print("Evaluation Metrics For Hybrid Recommendations Model:")
+print(f"Hit Rate: {coverage:.2%}")
 print(f"Average Precision@{k}: {average_precision_at_k:.2%}")
 
