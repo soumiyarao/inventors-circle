@@ -3,7 +3,7 @@ import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-class InventorRecommender:
+class InventorRecommenderCB:
     def __init__(self, patents_file):
         self.patents_file = patents_file
         self.dataset = None
@@ -59,5 +59,9 @@ class InventorRecommender:
         idx = self.inventor_df.index[self.inventor_df['inventor_name'] == inventor_name][0]
         similarity_scores = list(enumerate(self.similarity_matrix[idx]))
         similarity_scores = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
-        top_inventors = [self.inventor_df.iloc[i]["inventor_name"] for i, score in similarity_scores[1:top_n+1]]
+        top_inventors = [
+            (self.inventor_df.iloc[i]["inventor_name"], score)
+            for i, score in similarity_scores[1:top_n+1]
+        ]
+        #print(top_inventors)
         return top_inventors

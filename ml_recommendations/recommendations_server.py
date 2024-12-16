@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from user_recommendations import InventorRecommender
+from ml_recommendations.contest_based_recommender import InventorRecommenderCB
 
 app = Flask(__name__)
 recommender = None
@@ -15,7 +15,7 @@ def recommend():
     return jsonify({"recommendations": recommendations})
 
 if __name__ == '__main__':
-    recommender = InventorRecommender("patents.json")
+    recommender = InventorRecommenderCB("patents.json")
     recommender.initialize()
 
     app.run(port=5000)

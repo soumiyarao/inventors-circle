@@ -1,6 +1,6 @@
 import json
-import random
-from user_recommendations import InventorRecommender
+from contest_based_recommender import InventorRecommenderCB
+from collaborative_recommender import InventorRecommenderCF
 from pymongo import MongoClient
 import argparse
 
@@ -14,17 +14,6 @@ MONGO_URI = f"mongodb+srv://{args.user}:{args.password}@cluster0.8cy6qn7.mongodb
 with open("../dataset/patents.json", "r") as file:
     dataset = json.load(file)
 
-def to_sentence_case(name):
-    name_parts = name.split()
-    capitalized_name_parts = [part.capitalize() for part in name_parts]
-    return ' '.join(capitalized_name_parts)
-
-inventors = []
-for patent in dataset:
-    inventors.extend(patent["inventors"])
-
-inventor_names = [to_sentence_case(inventor.get("inventor_name")) for inventor in inventors if "inventor_name" in inventor]
-
 try:
     client = MongoClient(MONGO_URI)
     db = client["inventors_circle"]
@@ -33,24 +22,35 @@ except Exception as e:
     print(f"Failed to connect to MongoDB: {e}")
     exit()
 
+
 users = list(users_collection.find())
 
-recommender = InventorRecommender("../dataset/patents.json")
-recommender.initialize()
+recommender_cb = InventorRecommenderCB("../dataset/patents.json")
+recommender_cb.initialize()
+
+recommender_cf = InventorRecommenderCF(users_collection)
+recommender_cf.initialize()
 
 for user in users:
-    '''
-    recommendations = random.sample(
-        [name for name in inventor_names if name != user["name"]],
-        k=10
-    )
-    '''
-    recommendations = recommender.recommend_inventors(user["name"])
-    #print(f"\nTop Inventor Recommendations for {inventor_name}: {recommendations}")
-    
+    recommendations_cb = recommender_cb.recommend_inventors(user["name"], top_n=10)
+    recommendations_cf = recommender_cf.recommend_inventors(user["name"], top_n=10)
+
+    top_cb = recommendations_cb[:6]
+    top_cf = recommendations_cf[:4]
+
+    final_recommendations = set()
+
+    for name, _ in top_cb:
+        final_recommendations.add(name)
+
+    for name, _ in top_cf:
+        final_recommendations.add(name)
+
+    #print(final_recommendations)
+
     users_collection.update_one(
         {"_id": user["_id"]},
-        {"$set": {"recommendations": recommendations}}
+        {"$set": {"recommendations": list(final_recommendations)}}
     )
 
 print("Recommendations successfully added to MongoDB!")
